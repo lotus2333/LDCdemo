@@ -50,7 +50,7 @@
         <div id="content">
           <draggable :group="b" id="draggable">
             <!-- 占位盒子 -->
-            <div class="empbox">
+            <div class="empbox" id="deldrag">
 
             </div>
           </draggable>         
@@ -114,7 +114,12 @@ export default {
     //清空页面
     viewdel(){
       var del = document.getElementById('draggable');
-      del.parentNode.removeChild(del);
+      var childs = del.childNodes; 
+      for(var i = childs.length - 1; i >= 0; i--) { 
+        if(!(childs[i].isEqualNode(document.getElementById('deldrag')))){
+          del.removeChild(childs[i]);
+        }
+      } 
       alert("您已清空当前页面，请刷新重新编辑");
     }
   },

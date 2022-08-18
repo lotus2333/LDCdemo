@@ -1,55 +1,156 @@
 <template>
   <div id="app">
-   <div class="top">
-     <h1><i class="el-icon-star-on"></i>简易版低代码平台<i class="el-icon-star-on"></i></h1>
-   </div>
-   
+    <div class="top">
+      <h1>
+        <i class="el-icon-star-on"></i>简易版低代码平台<i
+          class="el-icon-star-on"
+        ></i>
+      </h1>
+    </div>
+
     <div class="bbox">
-      
       <div class="left">
         <h2>菜单栏</h2>
         <div class="box">
-       <el-button plain>朴素按钮</el-button>
-       <el-button type="primary" plain>主要按钮</el-button>
-       <el-button type="success" plain>成功按钮</el-button>
-       <el-button type="info" plain>信息按钮</el-button>
-       <el-button type="warning" plain>警告按钮</el-button>
-       <el-button type="danger" plain>危险按钮</el-button>
-       </div>
+          <draggable :group="a">
+
+            <!-- 按钮组件 -->
+            <p>示例按钮</p>
+            <el-button type="primary" plain>按钮</el-button>
+            
+            <!-- 文本输入框 -->
+            <p>示例文本</p>
+            <el-input v-model="input" placeholder="文本输入框"></el-input>
+
+            <!-- 上传图片组件 -->
+            <p>示例图片</p>
+            <tab-img></tab-img>
+            <router-view />
+            <p>图片上传</p>
+            <div>
+              <el-upload
+                action="#"
+                list-type="picture-card"
+                :on-preview="handlePictureCardPreview"
+                :on-remove="handleRemove"
+                :auto-upload="false"
+              >
+                <i class="el-icon-plus"></i>
+              </el-upload>
+              <el-dialog :visible.sync="dialogVisible">
+                <img width="100%" :src="dialogImageUrl" alt="" />
+              </el-dialog>
+            </div>
+          </draggable>
+        </div>
       </div>
 
-    <div class="center">
-      <h2>页面预览</h2>
+      <div class="center">
+        <h2>页面预览</h2>
+        <div id="content">
+          <draggable :group="b" id="draggable">
+            <!-- 占位盒子 -->
+            <div class="empbox">
+
+            </div>
+          </draggable>         
+        </div>
+
+        <!-- 删除按钮 -->
+        <div class="delete">
+          
+            <el-button slot="reference" size="mini" @click="viewdel">删除</el-button>
+          
+        </div>
+
+      </div>
     </div>
-   </div>
   </div>
 </template>
 
-<style lang="less">
+<script>
+//导入draggable组件
+import draggable from "vuedraggable";
 
-#app{
+// 导入img组件
+import tabImg from "@/components/tabImg.vue";
+
+export default {
+  data() {
+    return {
+      a: {
+        name: "ga",
+        pull: "clone",
+        put: false,
+      },
+      b: {
+        name: "ga",
+
+        put: true,
+      },
+      input: "",
+      dialogImageUrl: "",
+      dialogVisible: false,
+    };
+  },
+  //注册draggable组件
+  components: {
+    draggable,
+    tabImg,
+  },
+  methods: {
+    //点击上传的方法
+
+    //删除上传文件
+    handleRemove(file, fileList) {
+      console.log(file, fileList);
+    },
+    //放大
+    handlePictureCardPreview(file) {
+      this.dialogImageUrl = file.url;
+      this.dialogVisible = true;
+    },
+
+    //清空页面
+    viewdel(){
+      var del = document.getElementById('draggable');
+      del.parentNode.removeChild(del);
+      alert("您已清空当前页面，请刷新重新编辑");
+    }
+  },
+
+};
+</script>
+
+
+<style lang="less">
+#app {
   width: 100%;
   height: 100%;
-  
 }
 
-.bbox{
+p{
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+.bbox {
   display: flex;
 }
-.top{
+.top {
   background-color: rgb(62, 136, 111);
   white-space: nowrap;
 }
 
-h1{
+h1 {
   color: aliceblue;
   text-align: center;
 }
-.el-icon-star-on{
+.el-icon-star-on {
   color: #3cef7dbf;
 }
 
-.left{
+.left {
   width: 25vw;
   height: 100%;
   border: 1px solid #3cef7dbf;
@@ -57,22 +158,42 @@ h1{
   flex-wrap: wrap;
 }
 
-.left .box{
+.left .box {
   width: 25vw;
   border: 1px solid #3cef7dbf;
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
 }
-h2{
+h2 {
   background: #70bc8cbf;
   color: aliceblue;
+  width: 99%;
 }
 
-.center{
+.center {
   width: 75vw;
   height: 100%;
   border: 1px solid #3cef7dbf;
-  
+  position: relative;
 }
+
+.content{
+  height: 100%;
+}
+.empbox {
+  height: 5vh;
+}
+
+.box1 {
+  height: 2vh;
+  width: 25vw;
+}
+
+.delete{
+  display: flex;
+  justify-content: right;
+  // border: 1px solid #3cef7dbf;
+}
+
 </style>

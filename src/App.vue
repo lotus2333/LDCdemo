@@ -41,6 +41,15 @@
                 <img width="100%" :src="dialogImageUrl" alt="" />
               </el-dialog>
             </div>
+            <p>视频上传</p>
+            <div>
+              <upload-video
+                :videos="videoInfo.allVideo"
+                :videoBaseUrl="IMAGEURL"
+                @delete="deleteVideo"
+                @change="getVideo" >
+              </upload-video>
+            </div>
           </draggable>
         </div>
       </div>
@@ -74,6 +83,7 @@ import draggable from "vuedraggable";
 
 // 导入img组件
 import tabImg from "@/components/tabImg.vue";
+import UploadVideo from '@/components/UploadVideo.vue';
 
 export default {
   data() {
@@ -91,14 +101,56 @@ export default {
       input: "",
       dialogImageUrl: "",
       dialogVisible: false,
+      videoInfo: {
+        allVideo: [],
+        deleteVideo: []
+      }
+
     };
   },
   //注册draggable组件
   components: {
     draggable,
     tabImg,
+    UploadVideo
   },
   methods: {
+    getVideo(event) {
+      this.videoInfo.allVideo = event
+    },
+    deleteVideo(index) {
+      const video = this.videoInfo.allVideo[index]
+      if (video.videoLink) {
+      this.videoInfo.deleteVideo.push(video)
+      }
+      this.videoInfo.allVideo.splice(index, 1)
+    },
+    uploadFiles() {
+      const uploadList = []
+      this.videoInfo.allVideo.map(item => {
+            console.log(item, 'video')
+            const videoFile = new FormData()
+            if (!item.videoLink) {
+              videoFile.append('file', item.videoFile.raw)
+              videoFile.append('fileTag', 'video')
+              uploadList.push(
+                new Promise((resolve, reject) => {
+                  return ImgServe.uploadSingleFile(videoFile).then(res => {
+                    if (res.data.code === 200) {
+                      resolve(res.data.data)
+                    } else {
+                      this.$message('上传视频失败！')
+                    }
+                  })
+                })
+              )
+            }
+          })
+          return Promise.all(uploadList)
+    },
+
+
+
     //点击上传的方法
 
     //删除上传文件

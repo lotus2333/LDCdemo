@@ -21,7 +21,37 @@
             <!-- 文本输入框 -->
             <p>示例文本</p>
             <el-input v-model="input" placeholder="文本输入框"></el-input>
+            
+            <!--滑块-->
+            <div class="slider">
+            <span class="demonstration">滑块</span>
+            <el-slider v-model="slider1" show-input input-size="mini"></el-slider>
+            <!--单选多选框-->
+            <p>单选</p>
+            </div>
+             <el-radio-group v-model="radio">
+             <el-radio :label="3">草莓</el-radio>
+             <el-radio :label="6">西瓜</el-radio>
+             <el-radio :label="9">葡萄</el-radio>
+            </el-radio-group>
 
+            <p>多选</p>
+            <div class="checkbox">
+            <el-checkbox :indeterminate="indeterminate" v-model="checkAll" 
+            @change="handleCheckAll">全选</el-checkbox>
+            <div style="margin: 15px 0;"></div>
+            <el-checkbox-group v-model="checked" @change="handleCheck">
+            <el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>
+            </el-checkbox-group></div>
+
+            <!--选择器-->
+            <p>选择器</p>
+            <el-select v-model="select" filterable placeholder="请选择">
+            <el-option v-for="item in options" :key="item.value" :label="item.label"
+            :value="item.value">
+            </el-option>
+            </el-select>
+            
             <!-- 上传图片组件 -->
             <p>示例图片</p>
             <tab-img></tab-img>
@@ -84,10 +114,28 @@ import draggable from "vuedraggable";
 // 导入img组件
 import tabImg from "@/components/tabImg.vue";
 import UploadVideo from '@/components/UploadVideo.vue';
+const cityOptions = ['上海', '北京', '广州', '深圳'];
 
 export default {
   data() {
     return {
+    slider1:0,
+      radio:3,
+      checkAll:false,
+      checked:['上海','广州'],
+      cities:cityOptions,
+      isIndeterminate: true,
+      options: [{
+        value: "选项1",
+        label: "肠粉"
+      }, {
+        value: "选项2",
+        label: "双皮奶"
+      }, {
+        value: "选项3",
+        label: "油柑汁"
+      }],
+      select:"",
       a: {
         name: "ga",
         pull: "clone",
@@ -175,6 +223,19 @@ export default {
       alert("您已清空当前页面，请刷新重新编辑");
     }
   },
+  //全选
+    handleCheckAll(val){
+      this.checked = val ? cityOptions : [];
+      this.isIndeterminate = false;
+
+    },
+    // 多选
+    handleCheck(value){
+      let checkedCount = value.length;
+      this.checkAll = checkedCount === this.cities.length;
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.cities.length;
+
+    }
 
 };
 </script>
@@ -252,5 +313,10 @@ h2 {
   justify-content: right;
   // border: 1px solid #3cef7dbf;
 }
+
+.slider{
+  width: 25vw;
+}
+
 
 </style>
